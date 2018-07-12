@@ -1,14 +1,20 @@
-#include <aliIotLink.h>
+#include "aliIotLink.h"
 
-AliIotLink::AliIotLink()
+AliIotLink::AliIotLink(PubSubClient& client)
 {
-	
+	_client = &client;	
 }
-
 void AliIotLink::begin()
 {
-  randomSeed(analogRead(A0));
-  delayMicroseconds(random(0,10000));
+  //randomSeed(analogRead(A0));   //获取IO随机值【非安全的伪随机】作为种子
+  delayMicroseconds(random(0,10000));   //延迟随机时间
+  
+  generateClientId();
+  readUrl();
+  readUser();
+  readPasswd();
+  _client->setServer(_URL.c_str(),_port); //写入服务器名称与端口号
+  
 }
 
 
@@ -20,8 +26,13 @@ void AliIotLink::begin(String __ServerUrl,uint16_t __port,String __Id,String __D
 	_DeviceName = __DeviceName;
 	_ProductKey = __ProductKey;
 	_DeviceSecret = __DeviceSecret;
-	randomSeed(analogRead(A0));
+	//randomSeed(analogRead(A0));
     delayMicroseconds(random(0,10000));
+	generateClientId();
+	readUrl();
+	readUser();
+	readPasswd();
+	_client->setServer(_URL.c_str(),_port);  //写入服务器名称与端口号
 }
 
 void AliIotLink::writeUrl(String __ServerUrl)    // 设置登录网址
@@ -72,14 +83,14 @@ String AliIotLink::readClientId()
 //合成访问网址
  String AliIotLink::readUrl()
  {
-	 String _URL = _ProductKey + "." + _ServerUrl;
+	 _URL = _ProductKey + "." + _ServerUrl;
 	 return _URL;
  }
  
  //合成访问用户名
  String AliIotLink::readUser()
  {
-	 String _Username  = _DeviceName + "&" + _ProductKey ;
+	 _Username = _DeviceName + "&" + _ProductKey ;
 	 return _Username;
  }
  
@@ -88,16 +99,98 @@ String AliIotLink::readClientId()
  String AliIotLink::readPasswd()
  {
 	 String _Passwd =  "clientId" + _Id + "deviceName" + _DeviceName +"productKey"+_ProductKey + "timestamp" + Times;
-	 String _hash = "";
+	 _PasswdHash = "";
 	 
-	 Sha1.initHmac(_DeviceSecret.c_str(),32);  //传入密钥
+	 Sha1.initHmac((const uint8_t*)_DeviceSecret.c_str(),32);  //传入密钥
 	 Sha1.print(_Passwd);   //传入内容
 	 uint8_t *ByteHash = Sha1.resultHmac() ;
 	 
 	 for(int i =0;i<20;i++)
 	 {
-		_hash = _hash + "0123456789ABCDEF"[ByteHash[i]>>4];
-		_hash = _hash + "0123456789ABCDEF"[ByteHash[i]&0xf];
+		_PasswdHash = _PasswdHash + "0123456789ABCDEF"[ByteHash[i]>>4];
+		_PasswdHash = _PasswdHash + "0123456789ABCDEF"[ByteHash[i]&0xf];
 	 } 
-	 return _hash;  //返回HASH密文
+	 return _PasswdHash;  //返回HASH密文
  }
+ 
+ 
+ 
+ //===================mqtt部分=====================
+ 
+ bool AliIotLink::connect()
+ {
+	 return _client->connect(_ClientId.c_str(),_Username.c_str(),_PasswdHash.c_str());   //像服务器传递 ClientId，用户名，密码
+ }
+ 
+ //重连
+ void AliIotLink::reconnect()
+ {
+
+   while(!_client->connected()) //检查网络网络是否不正常，断开的网络会锁定重试
+   {
+
+	  if (connect())   //重连并判断是否成功
+	  {
+		  //成功
+		  for(byte a = 0;a<TopicNum;a++)
+		  {
+			  subscribe(TopicName[a].c_str());
+		  }
+		  
+		  //填写上线订阅，应该是个String数组传入循环订阅处理
+	  } 
+	else 
+		{
+			//链接失败
+		   delay(5000);   //暂停5秒钟重试
+		}
+  }
+ }
+ 
+ 
+ //循环检测
+ void AliIotLink::loop()
+ {
+   if (!_client->connected()) 
+   {
+    reconnect();
+   }
+	_client->loop();
+}
+ 
+ 
+int AliIotLink::state()    //错误消息返回
+{
+	return _client->state();
+}
+
+
+
+//回调函数
+void AliIotLink::setCallback(MQTT_CALLBACK_SIGNATURE)
+{
+	_client->setCallback(callback);
+	//SerialUSB.println(callback);
+}
+//监听Topic
+void AliIotLink::subscribe(const char* topic)
+{
+	_client->subscribe(topic);
+}
+//推送消息
+void AliIotLink::publish(const char* topic, const char* payload)
+{
+	_client->publish(topic,payload);
+}
+
+
+//登记topic
+void AliIotLink::subTopic(String topic)
+{
+	TopicName[TopicNum] = topic;
+	TopicNum++;
+	if(TopicNum > MQTT_Topic_Quantity)
+	{
+		TopicNum = MQTT_Topic_Quantity;
+	}
+}
