@@ -6,7 +6,7 @@
 #include <modules/mqtt/PubSubClient.h>
 #include <modules/Sha/sha1.h>
 
-#define MQTT_Topic_Quantity  2
+#define MQTT_Topic_Quantity  2  // 订阅TOPIC 数量
 
 
 class AliIotLink
@@ -41,8 +41,7 @@ class AliIotLink
 		String readUrl();  
 		String readUser();
 		String readPasswd();
-		//登录用四元素
-		
+	
 		//私有对象
 		PubSubClient* _client;    //mqtt接口
 		//私有变量
@@ -64,8 +63,4 @@ class AliIotLink
 		String _ProductKey;
 		String _DeviceSecret;
 };
-
-
-
-
 #endif
