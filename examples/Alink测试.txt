@@ -1,0 +1,21 @@
+#include "Alink.h"
+Alink link;
+void setup() 
+{
+  link.begin("a1MLyryAVZQ","ocUghVyGdCxSVjd463P6"); //productKey,deviceName
+  Serial.begin(9600);
+  //Serial.println(link.topoc_post);
+  //Serial.println(link.topoc_post_reply);
+  //Serial.println(link.topoc_set);
+  //Serial.println(link.topoc_set_reply);
+  
+  StaticJsonBuffer<40> Buffer;
+  JsonObject& Params = Buffer.createObject();
+  Params["temperature"] = 22.8;
+  link.post("1",Params);
+  Serial.println(link.json_str_post);
+}
+
+void loop() 
+{
+}
