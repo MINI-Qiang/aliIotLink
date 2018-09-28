@@ -1,18 +1,22 @@
 #include "Alink.h"
 Alink link;
+//设备内存不建议少于8K
 void setup() 
 {
   link.begin("a1MLyryAVZQ","ocUghVyGdCxSVjd463P6"); //productKey,deviceName
   Serial.begin(9600);
-  //Serial.println(link.topoc_post);
-  //Serial.println(link.topoc_post_reply);
-  //Serial.println(link.topoc_set);
-  //Serial.println(link.topoc_set_reply);
+  Serial.println();
   
-  StaticJsonBuffer<40> Buffer;
+  Serial.println(link.topoc_post);
+  Serial.println(link.topoc_post_reply);
+  Serial.println(link.topoc_set);
+  Serial.println(link.topoc_set_reply);
+  //拼内容包
+  StaticJsonBuffer<100> Buffer;
   JsonObject& Params = Buffer.createObject();
   Params["temperature"] = 22.8;
-  link.post("1",Params);
+  //拼上行包
+  link.post("1",Params);  //将内容负载传入
   Serial.println(link.json_str_post);
 }
 

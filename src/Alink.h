@@ -32,6 +32,7 @@ class Alink
 		void post(String _id,JsonObject &_AlinkJson);
 		
 		//编码Alink 应答消息
+		void set_reply(JsonObject &_AlinkJson);
 	
 		String json_str_post;
 		String topoc_post;
