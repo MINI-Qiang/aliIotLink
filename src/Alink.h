@@ -28,11 +28,14 @@ class Alink
 		
 		void begin(String _productKey,String _deviceName);  //传入2元素
 		//void version(String _version);
-		//编码Alink 上行消息
-		void post(String _id,JsonObject &_AlinkJson);
+		
+		void post(uint16_t _id,JsonObject &_AlinkJson);    //编码Alink 上行消息
+		void post_reply(String _JsonStr,uint16_t &_id,uint16_t &_code);   //上报应答解码
+		
 		
 		//编码Alink 应答消息
-		void set_reply(JsonObject &_AlinkJson);
+		void set_reply(uint16_t _id,uint16_t _code);  //应答ID与编码
+		void set(String JsonStr,uint16_t &_id,JsonObject &_AlinkJson); //服务器下推消息解码
 	
 		String json_str_post;
 		String topoc_post;

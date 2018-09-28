@@ -1,0 +1,22 @@
+#include "Alink.h"
+Alink link;
+//设备内存不建议少于8K
+void setup() 
+{
+  link.begin("a1MLyryAVZQ","ocUghVyGdCxSVjd463P6"); //productKey,deviceName
+  Serial.begin(9600);
+  Serial.println();
+  //解包
+  String JsonData = "{\"code\":200,\"data\":{},\"id\":\"1\",\"message\":\"success\",\"method\":\"thing.event.property.post\",\"version\":\"1.0\"}"; //模拟包
+  uint16_t ID,CODE;
+  link.post_reply(JsonData,ID,CODE);
+  Serial.println(ID);
+  Serial.println(CODE);
+  link.set_reply(1,200);
+  Serial.println(link.topoc_set_reply);
+}
+
+void loop() 
+{
+  
+}
