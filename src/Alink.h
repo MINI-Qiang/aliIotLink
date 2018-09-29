@@ -35,7 +35,7 @@ class Alink
 		
 		//编码Alink 应答消息
 		void set_reply(uint16_t _id,uint16_t _code);  //应答ID与编码
-		void set(String JsonStr,uint16_t &_id,JsonObject &_AlinkJson); //服务器下推消息解码
+		void set(String _JsonStr,uint16_t &_id,JsonObject *_AlinkJson); //服务器下推消息解码
 	
 		String json_str_post;
 		String topoc_post;
