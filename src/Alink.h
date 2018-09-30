@@ -1,6 +1,6 @@
 #ifndef ALink_H
 #define ALink_H
-
+#include "Arduino.h"
 #include <modules/ArduinoJson.h>
 
 //   /sys/{productKey}/{deviceName}/thing/event/property/post 消息上报与应答（属性上报与应答）
@@ -31,13 +31,15 @@ class Alink
 		
 		void post(uint16_t _id,JsonObject &_AlinkJson);    //编码Alink 上行消息
 		void post_reply(String _JsonStr,uint16_t &_id,uint16_t &_code);   //上报应答解码
+		void post_reply(byte *_JsonStr,uint16_t _length,uint16_t &_id,uint16_t &_code);   //上报应答解码
 		
 		
 		//编码Alink 应答消息
 		void set_reply(uint16_t _id,uint16_t _code);  //应答ID与编码
-		void set(String _JsonStr,uint16_t &_id,JsonObject *_AlinkJson); //服务器下推消息解码
+		void set(String _JsonStr,uint16_t &_id,char *_AlinkJson); //服务器下推消息解码
 	
 		String json_str_post;
+		String json_str_set_reply;
 		String topoc_post;
 		String topoc_post_reply;
 		String topoc_set;

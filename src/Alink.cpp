@@ -38,9 +38,25 @@ void Alink::post_reply(String _JsonStr, uint16_t &_id, uint16_t &_code)   //上�
 	_code = JsonReply["code"];
 }
 
+void Alink::post_reply(byte *_JsonStr,uint16_t _length,uint16_t &_id,uint16_t &_code)
+{
+	byte JsonStrBuff[_length];
+	for(uint16_t a=0;a<_length;a++)
+	{
+		JsonStrBuff[a] = _JsonStr[a];
+	}
+	
+	StaticJsonBuffer<512>  jsonBuffer;
+	JsonObject& JsonReply = jsonBuffer.parseObject(JsonStrBuff);
+	
+	String _ID = JsonReply["id"];    //接收字符串
+	_id = atoi(_ID.c_str());  //字符转数字
+	_code = JsonReply["code"];
+}
+
 void Alink::set_reply(uint16_t _id,uint16_t _code)  //应答ID与编码[服务器应答包编包]
 {
-	topoc_set_reply ="";
+	json_str_set_reply ="";
 	StaticJsonBuffer<512> jsonBuffer;
 	JsonObject& AlinkJson = jsonBuffer.createObject();
 	
@@ -49,19 +65,19 @@ void Alink::set_reply(uint16_t _id,uint16_t _code)  //应答ID与编码[服务�
 	StaticJsonBuffer<10> jsonData;
 	AlinkJson["data"] = jsonData.createObject();;
 
-	AlinkJson.printTo(topoc_set_reply);
+	AlinkJson.printTo(json_str_set_reply);
 }
-void Alink::set(String _JsonStr,uint16_t &_id,JsonObject *_AlinkJson) //服务器下推消息解码
+
+
+void Alink::set(String _JsonStr,uint16_t &_id,char *_AlinkJson) //服务器下推消息解码
 {
 	StaticJsonBuffer<512>  jsonBuffer;
 	JsonObject& JsonReply = jsonBuffer.parseObject(_JsonStr.c_str());
 	
 	String _ID = JsonReply["id"];    //接收字符串
 	_id = atoi(_ID.c_str());  //字符转数字
-	_AlinkJson = JsonReply["params"];
+	const char *AlinkJsonp = JsonReply["params"];
 	
 }
-
-
 
 
