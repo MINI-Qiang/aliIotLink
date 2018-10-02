@@ -68,16 +68,38 @@ void Alink::set_reply(uint16_t _id,uint16_t _code)  //应答ID与编码[服务�
 	AlinkJson.printTo(json_str_set_reply);
 }
 
-
-void Alink::set(String _JsonStr,uint16_t &_id,char *_AlinkJson) //服务器下推消息解码
+//服务器下推消息解码
+void Alink::set(String _JsonStr,uint16_t &_id,String _AlinkJson) //服务器下推消息解码
 {
+	/*
 	StaticJsonBuffer<512>  jsonBuffer;
 	JsonObject& JsonReply = jsonBuffer.parseObject(_JsonStr.c_str());
 	
 	String _ID = JsonReply["id"];    //接收字符串
 	_id = atoi(_ID.c_str());  //字符转数字
 	const char *AlinkJsonp = JsonReply["params"];
+	_AlinkJson = AlinkJsonp;
+	*/
 	
 }
 
+void Alink::set(byte *_JsonStr,uint16_t _length,uint16_t &_id,String _AlinkJson)
+{
+	byte JsonStrBuff[_length];
+	for(uint16_t a=0;a<_length;a++)
+	{
+		JsonStrBuff[a] = _JsonStr[a];
+	}
+	
+	StaticJsonBuffer<512>  jsonBuffer;
+	JsonObject& JsonReply = jsonBuffer.parseObject(JsonStrBuff);
+	
+	String _ID = JsonReply["id"];    //接收字符串
+	_id = atoi(_ID.c_str());  //字符转数字
+
+	
+	byte AlinkJson = JsonReply["params"]["OnOff"];
+	Serial.println(AlinkJson);
+	//_AlinkJson = AlinkJsonp;
+}
 
