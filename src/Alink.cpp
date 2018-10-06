@@ -4,10 +4,10 @@ void Alink::begin(String _productKey,String _deviceName)
 {
 	productKey = _productKey;
 	deviceName = _deviceName;
-	topoc_post = "/sys/" + productKey + "/" + deviceName + "/thing/event/property/post";
-	topoc_post_reply = "/sys/" + productKey + "/" + deviceName + "/thing/event/property/post_reply";
-	topoc_set = "/sys/" + productKey + "/" + deviceName + "/thing/service/property/set";
-    topoc_set_reply = "/sys/" + productKey + "/" + deviceName + "/thing/service/property/set_reply";
+	topic_post = "/sys/" + productKey + "/" + deviceName + "/thing/event/property/post";
+	topic_post_reply = "/sys/" + productKey + "/" + deviceName + "/thing/event/property/post_reply";
+	topic_set = "/sys/" + productKey + "/" + deviceName + "/thing/service/property/set";
+    topic_set_reply = "/sys/" + productKey + "/" + deviceName + "/thing/service/property/set_reply";
 }
 
 
@@ -21,7 +21,7 @@ void Alink::post(uint16_t _id, JsonObject &_AlinkJson)
 	AlinkJson["id"] = String(_id, DEC);
 	AlinkJson["params"] = _AlinkJson;
 	AlinkJson["version"] = "0.0.1";
-	AlinkJson["method"] = topoc_post;
+	AlinkJson["method"] = topic_post;
  
 	AlinkJson.printTo(json_str_post);
 }
@@ -69,7 +69,7 @@ void Alink::set_reply(uint16_t _id,uint16_t _code)  //应答ID与编码[服务�
 }
 
 //服务器下推消息解码
-void Alink::set(String _JsonStr,uint16_t &_id,String _AlinkJson) //服务器下推消息解码
+void Alink::set(String _JsonStr,uint16_t &_id,String &_AlinkJson) //服务器下推消息解码
 {
 	/*
 	StaticJsonBuffer<512>  jsonBuffer;
@@ -83,7 +83,7 @@ void Alink::set(String _JsonStr,uint16_t &_id,String _AlinkJson) //服务器下�
 	
 }
 
-void Alink::set(byte *_JsonStr,uint16_t _length,uint16_t &_id,String _AlinkJson)
+void Alink::set(byte *_JsonStr,uint16_t _length,uint16_t &_id,String &_AlinkJson)
 {
 	byte JsonStrBuff[_length];
 	for(uint16_t a=0;a<_length;a++)
@@ -98,8 +98,8 @@ void Alink::set(byte *_JsonStr,uint16_t _length,uint16_t &_id,String _AlinkJson)
 	_id = atoi(_ID.c_str());  //字符转数字
 
 	
-	byte AlinkJson = JsonReply["params"]["OnOff"];
-	Serial.println(AlinkJson);
-	//_AlinkJson = AlinkJsonp;
+	_AlinkJson = JsonReply["params"].as<String>();
+	//Serial.println(AlinkJson);
+	//_AlinkJson = AlinkJsonpas
 }
 

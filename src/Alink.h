@@ -36,15 +36,15 @@ class Alink
 		
 		//编码Alink 应答消息
 		void set_reply(uint16_t _id,uint16_t _code);  //应答ID与编码
-		void set(String _JsonStr,uint16_t &_id,String _AlinkJson); //服务器下推消息解码
-		void set(byte *_JsonStr,uint16_t _length,uint16_t &_id,String _AlinkJson);
+		void set(String _JsonStr,uint16_t &_id,String &_AlinkJson); //服务器下推消息解码
+		void set(byte *_JsonStr,uint16_t _length,uint16_t &_id,String &_AlinkJson);
 	
 		String json_str_post;
 		String json_str_set_reply;
-		String topoc_post;
-		String topoc_post_reply;
-		String topoc_set;
-		String topoc_set_reply;
+		String topic_post;
+		String topic_post_reply;
+		String topic_set;
+		String topic_set_reply;
 	private:
 		String productKey;
 		String deviceName;
