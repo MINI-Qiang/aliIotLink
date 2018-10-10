@@ -1,0 +1,134 @@
+#include <aliIotLink.h>
+#include "Alink.h"
+#include <ESP8266WiFi.h>
+
+const char* ssid = "HUAWEI-B310-E754";
+const char* password = "13855694020";
+const char* DeviceName = "iJKtZe6MYlsEEV0ykB5J";
+const char* ProductKey = "a1hPzrIkrvR";
+const char* DeviceSecret = "1moXhCHFrZMU2RXUxL39nmeWWPjg8NTv";
+
+
+WiFiClient espClient;   //实例化 wifi网络
+PubSubClient client(espClient); //将网络传入MQTT
+AliIotLink aliLink(client);  //将mqtt传入服务
+Alink link;  //初始化Alink协议
+byte LED = D2;
+void LED1(byte Swetch);
+//回调函数（回调业务逻辑，收到收到开关指令，调用LED开关函数）
+void Callbacks(char* topic, byte* payload, unsigned int length)
+{
+  //调试信息
+  Serial.print(topic);
+  Serial.print(":");
+  for (int i = 0; i < length; i++)
+  {
+    Serial.print((char)payload[i]);
+  }
+  Serial.println();
+
+  //服务器消息下发应答
+  if (strcmp(topic, link.topic_set.c_str()) == 0)
+  {
+    Serial.println("SET");
+    String JsonData;
+    uint16_t ID;
+    link.set(payload, length, ID, JsonData);
+    Serial.println(JsonData);
+    StaticJsonBuffer<100>  JsonDataBuffer;
+    JsonObject& JsonDataReply = JsonDataBuffer.parseObject(JsonData.c_str());
+
+    int a = JsonDataReply["OnOff"];
+    Serial.println(a);
+    if (a == 1)
+    {
+      digitalWrite(LED, HIGH);
+      //消息上达
+    StaticJsonBuffer<100>  LEDOnOffBuffer;
+    JsonObject& LEDOnOff = LEDOnOffBuffer.createObject();
+    LEDOnOff["LEDOnOff"] = a;
+    link.post(1, LEDOnOff);
+    aliLink.publish(link.topic_post.c_str(), link.json_str_post.c_str()); //消息topic,json内容编码
+    Serial.println(link.topic_post);
+    Serial.println(link.json_str_post);
+    }
+    else
+    {
+      digitalWrite(LED, LOW);
+      //消息上达
+    StaticJsonBuffer<100>  LEDOnOffBuffer;
+    JsonObject& LEDOnOff = LEDOnOffBuffer.createObject();
+    LEDOnOff["LEDOnOff"] = a;
+    link.post(1, LEDOnOff);
+    aliLink.publish(link.topic_post.c_str(), link.json_str_post.c_str()); //消息topic,json内容编码
+    Serial.println(link.topic_post);
+    Serial.println(link.json_str_post);
+    }
+    
+    
+  }
+
+  //设备上报消息响应
+  if (strcmp(topic, link.topic_post_reply.c_str()) == 0)
+  {
+    Serial.println("POST");
+  }
+
+  // 应答消息流程，解析消息取得ID，和负载数据，将Id作为应答码，向服务器发送CODE200消息
+  uint16_t ID, CODE;
+  link.post_reply(payload, length, ID, CODE);
+  link.set_reply(ID, 200); //编码确认消息
+  aliLink.publish(link.topic_set_reply.c_str(), link.json_str_set_reply.c_str()); //消息topic,json内容编码
+}
+
+void setup()
+{
+
+  Serial.begin(115200);
+  pinMode(LED, OUTPUT);
+  digitalWrite(LED, LOW);
+
+  WiFi.mode(WIFI_STA);   //配置为客户端模式
+  WiFi.begin(ssid, password);  //初始化并且链接wifi
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+
+  aliLink.writeID(DeviceName);   //设备名称
+  aliLink.writeDeviceName(DeviceName);  //元素1  DeviceName
+  aliLink.writeProductKey(ProductKey);  //元素2  ProductKey
+  aliLink.writeDeviceSecret(DeviceSecret); //元素3  DeviceSecret
+  link.begin(ProductKey, DeviceName); //productKey,deviceName
+  //根据业务情况，本项目为LED等，只负责接收服务器下发指令，收到后应答
+  aliLink.subTopic(link.topic_set);   //订阅 服务器下发
+
+  //aliLink.subTopic("/a1SRXXXXX5L/ArduinoIOT/update/error");   //订阅
+  aliLink.setCallback(Callbacks);   //注册回调函数
+  aliLink.begin();  //完成初始化配置
+}
+void loop()
+{
+
+  if (aliLink.state() != 0)
+  {
+    Serial.println(aliLink.state());
+  }
+  aliLink.loop();
+  //delay(1000);
+}
+
+
+void LED1(byte Swetch)
+{
+  if (Swetch == 1)
+  {
+    digitalWrite(LED, HIGH);
+  }
+  else
+  {
+    digitalWrite(LED, LOW);
+  }
+}
+
