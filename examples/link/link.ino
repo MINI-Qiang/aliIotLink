@@ -1,9 +1,9 @@
-#include <aliIotLink.h>
+#include <aliIot.h>
 #include <SPI.h>
 #include <Ethernet2.h>
 EthernetClient ethClient;
 PubSubClient client(ethClient);
-AliIotLink aliLink(client);
+AliIot aliLink(client);
 byte mac[] = {0x00, 0xED, 0xBA, 0xFE, 0xFE, 0xED };
 
 void Callbacks(char* topic, byte* payload, unsigned int length)

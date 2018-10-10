@@ -1,4 +1,4 @@
-#include <aliIotLink.h>
+#include <aliIot.h>
 #include <ESP8266WiFi.h>
 
 const char* ssid = "OCROBOT";
@@ -7,7 +7,7 @@ const char* password = "jiekgongfang";
 
 WiFiClient espClient;   //实例化 wifi网络
 PubSubClient client(espClient); //将网络传入MQTT
-AliIotLink aliLink(client);  //将mqtt传入服务
+AliIot aliLink(client);  //将mqtt传入服务
 
 //回调函数
 void Callbacks(char* topic, byte* payload, unsigned int length)

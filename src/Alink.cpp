@@ -4,10 +4,10 @@ void Alink::begin(String _productKey,String _deviceName)
 {
 	productKey_ = _productKey;
 	deviceName_ = _deviceName;
-	topic_post_ = "/sys/" + productKey + "/" + deviceName + "/thing/event/property/post";
-	topic_post_reply_ = "/sys/" + productKey + "/" + deviceName + "/thing/event/property/post_reply";
-	topic_set_ = "/sys/" + productKey + "/" + deviceName + "/thing/service/property/set";
-    topic_set_reply_ = "/sys/" + productKey + "/" + deviceName + "/thing/service/property/set_reply";
+	topic_post_ = "/sys/" + productKey_ + "/" + deviceName_ + "/thing/event/property/post";
+	topic_post_reply_ = "/sys/" + productKey_ + "/" + deviceName_ + "/thing/event/property/post_reply";
+	topic_set_ = "/sys/" + productKey_ + "/" + deviceName_ + "/thing/service/property/set";
+    topic_set_reply_ = "/sys/" + productKey_ + "/" + deviceName_ + "/thing/service/property/set_reply";
 }
 
 
@@ -21,7 +21,7 @@ void Alink::serialization_post(uint16_t _id, JsonObject &_AlinkJson)
 	AlinkJson["id"] = String(_id, DEC);
 	AlinkJson["params"] = _AlinkJson;
 	AlinkJson["version"] = "0.0.1";
-	AlinkJson["method"] = topic_post;
+	AlinkJson["method"] = topic_post_;
  
 	AlinkJson.printTo(json_str_post_);
 }
@@ -69,7 +69,7 @@ void Alink::serialization_set(uint16_t _id,uint16_t _code)  //应答ID与编码[
 }
 
 //服务器下推消息解码
-void Alink::deserialization_set(String _JsonStr,uint16_t &_id,const String &_AlinkJson) //服务器下推消息解码
+void Alink::deserialization_set(String _JsonStr,uint16_t &_id,String &_AlinkJson) //服务器下推消息解码
 {
 	/*
 	StaticJsonBuffer<512>  jsonBuffer;
@@ -83,10 +83,10 @@ void Alink::deserialization_set(String _JsonStr,uint16_t &_id,const String &_Ali
 	
 }
 
-void Alink::deserialization_set(byte *_JsonStr,uint16_t length_,uint16_t &_id, const String &_AlinkJson)
+void Alink::deserialization_set(byte *_JsonStr,uint16_t _length,uint16_t &_id, String &_AlinkJson)
 {
 	byte JsonStrBuff[_length];
-	for(uint16_t a=0;a<length_;a++)
+	for(uint16_t a=0; a<_length; a++)
 	{
 		JsonStrBuff[a] = _JsonStr[a];
 	}

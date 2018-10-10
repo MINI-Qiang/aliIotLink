@@ -1,0 +1,43 @@
+#include "aliIot.h"
+#include <ESP8266WiFi.h>
+
+const char* ssid = "OCROBOT";
+const char* password = "jiekgongfang";
+//三元素
+const char* ProductKey = "a1MLyryAVZQ";
+const char* DeviceName = "ocUghVyGdCxSVjd463P6";
+const char* DeviceSecret = "rYEeo0xhGJXp3pzhquQHTjRQ25P2dOt7";
+
+WiFiClient espClient;   //实例化 wifi网络
+PubSubClient client(espClient); //将wifi网络传入MQTT
+AliIot Link(client);  //将mqtt对象传入AliIOT
+
+void Callbacks(char* topic, byte* payload, unsigned int length);  //消息回调函数
+
+void setup()
+{
+  WiFi.mode(WIFI_STA);   //配置为客户端模式
+  WiFi.begin(ssid, password);  //初始化并且链接wifi
+  Link.init(DeviceName, ProductKey, DeviceSecret); //初始化环境三元素,并且自动订阅set 与post_reply topic
+  Link.setCallback(Callbacks);   //注册回调函数
+}
+void loop()
+{
+  Link.loop();  //服务器心跳维持与断线重连
+
+  //业务逻辑，数据上报等用户代码
+
+}
+
+void Callbacks(char* topic, byte* payload, unsigned int length)
+{
+  //自动消息应答
+  //设备上报消息响应
+  if (strcmp(topic, link.topic_post_reply.c_str()) == 0)
+  {
+    Serial.println("POST");
+  }
+
+  //下行操作用户代码
+  
+}

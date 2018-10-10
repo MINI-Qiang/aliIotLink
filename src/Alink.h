@@ -11,10 +11,8 @@
 
 /*暂不实现*/
 /*
-
 TOPIC：/sys/{productKey}/{deviceName}/thing/event/{tsl.event.identifier}/post  事件上报与应答
 REPLY TOPIC：/sys/{productKey}/{deviceName}/thing/event/{tsl.event.identifier}/post_reply
-
 
 TOPIC：/sys/{productKey}/{deviceName}/thing/service/{tsl.service.identifier}  服务下推
 REPLY TOPIC：/sys/{productKey}/{deviceName}/thing/service/{tsl.service.identifier}_reply
@@ -36,8 +34,8 @@ class Alink
 		
 		//编码Alink 应答消息
 		void serialization_set(uint16_t _id,uint16_t _code);  //应答ID与编码
-		void deserialization_set(String _JsonStr,uint16_t &_id, const String &_AlinkJson); //服务器下推消息解码
-		void deserialization_set(byte *_JsonStr,uint16_t _length,uint16_t &_id, const String &_AlinkJson);
+		void deserialization_set(String _JsonStr,uint16_t &_id, String &_AlinkJson); //服务器下推消息解码
+		void deserialization_set(byte *_JsonStr,uint16_t _length,uint16_t &_id, String &_AlinkJson);
 	
 		String json_str_post_;
 		String json_str_set_reply_;
