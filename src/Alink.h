@@ -3,10 +3,10 @@
 #include "Arduino.h"
 #include <modules/ArduinoJson.h>
 
-//   /sys/{productKey}/{deviceName}/thing/event/property/post 消息上报与应答（属性上报与应答）
+//   /sys/{productKey}/{deviceName}/thing/event/property/post        消息上报与应答（属性上报与应答）
 //   /sys/{productKey}/{deviceName}/thing/event/property/post_reply  服务器应答上报
 
-//   /sys/{productKey}/{deviceName}/thing/service/property/set   服务器下发消息（属性下推与应答）
+//   /sys/{productKey}/{deviceName}/thing/service/property/set       服务器下发消息（属性下推与应答）
 //   /sys/{productKey}/{deviceName}/thing/service/property/set_reply   设备应答
 
 /*暂不实现*/
@@ -29,33 +29,24 @@ class Alink
 		void begin(String _productKey,String _deviceName);  //传入2元素
 		//void version(String _version);
 		
-		void post(uint16_t _id,JsonObject &_AlinkJson);    //编码Alink 上行消息
-		void post_reply(String _JsonStr,uint16_t &_id,uint16_t &_code);   //上报应答解码
-		void post_reply(byte *_JsonStr,uint16_t _length,uint16_t &_id,uint16_t &_code);   //上报应答解码
+		void serialization_post(uint16_t _id,JsonObject &_AlinkJson);    //编码Alink 上行消息
+		void deserialization_post(String _JsonStr,uint16_t &_id,uint16_t &_code);   //上报应答解码
+		void deserialization_post(byte *_JsonStr,uint16_t _length,uint16_t &_id,uint16_t &_code);   //上报应答解码
 		
 		
 		//编码Alink 应答消息
-		void set_reply(uint16_t _id,uint16_t _code);  //应答ID与编码
-		void set(String _JsonStr,uint16_t &_id,String &_AlinkJson); //服务器下推消息解码
-		void set(byte *_JsonStr,uint16_t _length,uint16_t &_id,String &_AlinkJson);
+		void serialization_set(uint16_t _id,uint16_t _code);  //应答ID与编码
+		void deserialization_set(String _JsonStr,uint16_t &_id, const String &_AlinkJson); //服务器下推消息解码
+		void deserialization_set(byte *_JsonStr,uint16_t _length,uint16_t &_id, const String &_AlinkJson);
 	
-		String json_str_post;
-		String json_str_set_reply;
-		String topic_post;
-		String topic_post_reply;
-		String topic_set;
-		String topic_set_reply;
+		String json_str_post_;
+		String json_str_set_reply_;
+		String topic_post_;
+		String topic_post_reply_;
+		String topic_set_;
+		String topic_set_reply_;
 	private:
-		String productKey;
-		String deviceName;
+		String productKey_;
+		String deviceName_;
 };
-
-
-//解码路由
-
-//解码应答消息
-
-//解码下行消息
-
-
 #endif
