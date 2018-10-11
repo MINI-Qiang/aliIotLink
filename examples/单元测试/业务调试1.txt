@@ -9,16 +9,16 @@ const char* ProductKey = "a1hPzrIkrvR";
 const char* DeviceSecret = "1moXhCHFrZMU2RXUxL39nmeWWPjg8NTv";
 
 
-WiFiClient espClient;   //ÊµÀı»¯ wifiÍøÂç
-PubSubClient client(espClient); //½«ÍøÂç´«ÈëMQTT
-AliIotLink aliLink(client);  //½«mqtt´«Èë·şÎñ
-Alink link;  //³õÊ¼»¯AlinkĞ­Òé
+WiFiClient espClient;   //å®ä¾‹åŒ– wifiç½‘ç»œ
+PubSubClient client(espClient); //å°†ç½‘ç»œä¼ å…¥MQTT
+AliIotLink aliLink(client);  //å°†mqttä¼ å…¥æœåŠ¡
+Alink link;  //åˆå§‹åŒ–Alinkåè®®
 byte LED = D2;
 void LED1(byte Swetch);
-//»Øµ÷º¯Êı£¨»Øµ÷ÒµÎñÂß¼­£¬ÊÕµ½ÊÕµ½¿ª¹ØÖ¸Áî£¬µ÷ÓÃLED¿ª¹Øº¯Êı£©
+//å›è°ƒå‡½æ•°ï¼ˆå›è°ƒä¸šåŠ¡é€»è¾‘ï¼Œæ”¶åˆ°æ”¶åˆ°å¼€å…³æŒ‡ä»¤ï¼Œè°ƒç”¨LEDå¼€å…³å‡½æ•°ï¼‰
 void Callbacks(char* topic, byte* payload, unsigned int length)
 {
-  //µ÷ÊÔĞÅÏ¢
+  //è°ƒè¯•ä¿¡æ¯
   Serial.print(topic);
   Serial.print(":");
   for (int i = 0; i < length; i++)
@@ -27,7 +27,7 @@ void Callbacks(char* topic, byte* payload, unsigned int length)
   }
   Serial.println();
 
-  //·şÎñÆ÷ÏûÏ¢ÏÂ·¢Ó¦´ğ
+  //æœåŠ¡å™¨æ¶ˆæ¯ä¸‹å‘åº”ç­”
   if (strcmp(topic, link.topic_set.c_str()) == 0)
   {
     Serial.println("SET");
@@ -43,24 +43,24 @@ void Callbacks(char* topic, byte* payload, unsigned int length)
     if (a == 1)
     {
       digitalWrite(LED, HIGH);
-      //ÏûÏ¢ÉÏ´ï
+      //æ¶ˆæ¯ä¸Šè¾¾
     StaticJsonBuffer<100>  LEDOnOffBuffer;
     JsonObject& LEDOnOff = LEDOnOffBuffer.createObject();
     LEDOnOff["LEDOnOff"] = a;
     link.post(1, LEDOnOff);
-    aliLink.publish(link.topic_post.c_str(), link.json_str_post.c_str()); //ÏûÏ¢topic,jsonÄÚÈİ±àÂë
+    aliLink.publish(link.topic_post.c_str(), link.json_str_post.c_str()); //æ¶ˆæ¯topic,jsonå†…å®¹ç¼–ç 
     Serial.println(link.topic_post);
     Serial.println(link.json_str_post);
     }
     else
     {
       digitalWrite(LED, LOW);
-      //ÏûÏ¢ÉÏ´ï
+      //æ¶ˆæ¯ä¸Šè¾¾
     StaticJsonBuffer<100>  LEDOnOffBuffer;
     JsonObject& LEDOnOff = LEDOnOffBuffer.createObject();
     LEDOnOff["LEDOnOff"] = a;
     link.post(1, LEDOnOff);
-    aliLink.publish(link.topic_post.c_str(), link.json_str_post.c_str()); //ÏûÏ¢topic,jsonÄÚÈİ±àÂë
+    aliLink.publish(link.topic_post.c_str(), link.json_str_post.c_str()); //æ¶ˆæ¯topic,jsonå†…å®¹ç¼–ç 
     Serial.println(link.topic_post);
     Serial.println(link.json_str_post);
     }
@@ -68,17 +68,17 @@ void Callbacks(char* topic, byte* payload, unsigned int length)
     
   }
 
-  //Éè±¸ÉÏ±¨ÏûÏ¢ÏìÓ¦
+  //è®¾å¤‡ä¸ŠæŠ¥æ¶ˆæ¯å“åº”
   if (strcmp(topic, link.topic_post_reply.c_str()) == 0)
   {
     Serial.println("POST");
   }
 
-  // Ó¦´ğÏûÏ¢Á÷³Ì£¬½âÎöÏûÏ¢È¡µÃID£¬ºÍ¸ºÔØÊı¾İ£¬½«Id×÷ÎªÓ¦´ğÂë£¬Ïò·şÎñÆ÷·¢ËÍCODE200ÏûÏ¢
+  // åº”ç­”æ¶ˆæ¯æµç¨‹ï¼Œè§£ææ¶ˆæ¯å–å¾—IDï¼Œå’Œè´Ÿè½½æ•°æ®ï¼Œå°†Idä½œä¸ºåº”ç­”ç ï¼Œå‘æœåŠ¡å™¨å‘é€CODE200æ¶ˆæ¯
   uint16_t ID, CODE;
   link.post_reply(payload, length, ID, CODE);
-  link.set_reply(ID, 200); //±àÂëÈ·ÈÏÏûÏ¢
-  aliLink.publish(link.topic_set_reply.c_str(), link.json_str_set_reply.c_str()); //ÏûÏ¢topic,jsonÄÚÈİ±àÂë
+  link.set_reply(ID, 200); //ç¼–ç ç¡®è®¤æ¶ˆæ¯
+  aliLink.publish(link.topic_set_reply.c_str(), link.json_str_set_reply.c_str()); //æ¶ˆæ¯topic,jsonå†…å®¹ç¼–ç 
 }
 
 void setup()
@@ -88,25 +88,25 @@ void setup()
   pinMode(LED, OUTPUT);
   digitalWrite(LED, LOW);
 
-  WiFi.mode(WIFI_STA);   //ÅäÖÃÎª¿Í»§¶ËÄ£Ê½
-  WiFi.begin(ssid, password);  //³õÊ¼»¯²¢ÇÒÁ´½Ówifi
+  WiFi.mode(WIFI_STA);   //é…ç½®ä¸ºå®¢æˆ·ç«¯æ¨¡å¼
+  WiFi.begin(ssid, password);  //åˆå§‹åŒ–å¹¶ä¸”é“¾æ¥wifi
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
 
 
-  aliLink.writeID(DeviceName);   //Éè±¸Ãû³Æ
-  aliLink.writeDeviceName(DeviceName);  //ÔªËØ1  DeviceName
-  aliLink.writeProductKey(ProductKey);  //ÔªËØ2  ProductKey
-  aliLink.writeDeviceSecret(DeviceSecret); //ÔªËØ3  DeviceSecret
+  aliLink.writeID(DeviceName);   //è®¾å¤‡åç§°
+  aliLink.writeDeviceName(DeviceName);  //å…ƒç´ 1  DeviceName
+  aliLink.writeProductKey(ProductKey);  //å…ƒç´ 2  ProductKey
+  aliLink.writeDeviceSecret(DeviceSecret); //å…ƒç´ 3  DeviceSecret
   link.begin(ProductKey, DeviceName); //productKey,deviceName
-  //¸ù¾İÒµÎñÇé¿ö£¬±¾ÏîÄ¿ÎªLEDµÈ£¬Ö»¸ºÔğ½ÓÊÕ·şÎñÆ÷ÏÂ·¢Ö¸Áî£¬ÊÕµ½ºóÓ¦´ğ
-  aliLink.subTopic(link.topic_set);   //¶©ÔÄ ·şÎñÆ÷ÏÂ·¢
+  //æ ¹æ®ä¸šåŠ¡æƒ…å†µï¼Œæœ¬é¡¹ç›®ä¸ºLEDç­‰ï¼Œåªè´Ÿè´£æ¥æ”¶æœåŠ¡å™¨ä¸‹å‘æŒ‡ä»¤ï¼Œæ”¶åˆ°ååº”ç­”
+  aliLink.subTopic(link.topic_set);   //è®¢é˜… æœåŠ¡å™¨ä¸‹å‘
 
-  //aliLink.subTopic("/a1SRXXXXX5L/ArduinoIOT/update/error");   //¶©ÔÄ
-  aliLink.setCallback(Callbacks);   //×¢²á»Øµ÷º¯Êı
-  aliLink.begin();  //Íê³É³õÊ¼»¯ÅäÖÃ
+  //aliLink.subTopic("/a1SRXXXXX5L/ArduinoIOT/update/error");   //è®¢é˜…
+  aliLink.setCallback(Callbacks);   //æ³¨å†Œå›è°ƒå‡½æ•°
+  aliLink.begin();  //å®Œæˆåˆå§‹åŒ–é…ç½®
 }
 void loop()
 {

@@ -3,41 +3,41 @@
 
 const char* ssid = "OCROBOT";
 const char* password = "jiekgongfang";
-//ÈıÔªËØ
+//ä¸‰å…ƒç´ 
 const char* ProductKey = "a1MLyryAVZQ";
 const char* DeviceName = "ocUghVyGdCxSVjd463P6";
 const char* DeviceSecret = "rYEeo0xhGJXp3pzhquQHTjRQ25P2dOt7";
 
-WiFiClient espClient;   //ÊµÀı»¯ wifiÍøÂç
-PubSubClient client(espClient); //½«wifiÍøÂç´«ÈëMQTT
-AliIot Link(client);  //½«mqtt¶ÔÏó´«ÈëAliIOT
+WiFiClient espClient;   //å®ä¾‹åŒ– wifiç½‘ç»œ
+PubSubClient client(espClient); //å°†wifiç½‘ç»œä¼ å…¥MQTT
+AliIot Link(client);  //å°†mqttå¯¹è±¡ä¼ å…¥AliIOT
 
-void Callbacks(char* topic, byte* payload, unsigned int length);  //ÏûÏ¢»Øµ÷º¯Êı
+void Callbacks(char* topic, byte* payload, unsigned int length);  //æ¶ˆæ¯å›è°ƒå‡½æ•°
 
 void setup()
 {
-  WiFi.mode(WIFI_STA);   //ÅäÖÃÎª¿Í»§¶ËÄ£Ê½
-  WiFi.begin(ssid, password);  //³õÊ¼»¯²¢ÇÒÁ´½Ówifi
-  Link.init(DeviceName, ProductKey, DeviceSecret); //³õÊ¼»¯»·¾³ÈıÔªËØ,²¢ÇÒ×Ô¶¯¶©ÔÄset Óëpost_reply topic
-  Link.setCallback(Callbacks);   //×¢²á»Øµ÷º¯Êı
+  WiFi.mode(WIFI_STA);   //é…ç½®ä¸ºå®¢æˆ·ç«¯æ¨¡å¼
+  WiFi.begin(ssid, password);  //åˆå§‹åŒ–å¹¶ä¸”é“¾æ¥wifi
+  Link.init(DeviceName, ProductKey, DeviceSecret); //åˆå§‹åŒ–ç¯å¢ƒä¸‰å…ƒç´ ,å¹¶ä¸”è‡ªåŠ¨è®¢é˜…set ä¸post_reply topic
+  Link.setCallback(Callbacks);   //æ³¨å†Œå›è°ƒå‡½æ•°
 }
 void loop()
 {
-  Link.loop();  //·şÎñÆ÷ĞÄÌøÎ¬³ÖÓë¶ÏÏßÖØÁ¬
+  Link.loop();  //æœåŠ¡å™¨å¿ƒè·³ç»´æŒä¸æ–­çº¿é‡è¿
 
-  //ÒµÎñÂß¼­£¬Êı¾İÉÏ±¨µÈÓÃ»§´úÂë
+  //ä¸šåŠ¡é€»è¾‘ï¼Œæ•°æ®ä¸ŠæŠ¥ç­‰ç”¨æˆ·ä»£ç 
 
 }
 
 void Callbacks(char* topic, byte* payload, unsigned int length)
 {
-  //×Ô¶¯ÏûÏ¢Ó¦´ğ
-  //Éè±¸ÉÏ±¨ÏûÏ¢ÏìÓ¦
+  //è‡ªåŠ¨æ¶ˆæ¯åº”ç­”
+  //è®¾å¤‡ä¸ŠæŠ¥æ¶ˆæ¯å“åº”
   if (strcmp(topic, link.topic_post_reply.c_str()) == 0)
   {
     Serial.println("POST");
   }
 
-  //ÏÂĞĞ²Ù×÷ÓÃ»§´úÂë
+  //ä¸‹è¡Œæ“ä½œç”¨æˆ·ä»£ç 
   
 }

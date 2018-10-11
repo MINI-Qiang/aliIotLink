@@ -1,13 +1,13 @@
 #include "Alink.h"
 Alink link;
-//Éè±¸ÄÚ´æ²»½¨ÒéÉÙÓÚ8K
+//è®¾å¤‡å†…å­˜ä¸å»ºè®®å°‘äº8K
 void setup() 
 {
   link.begin("a1MLyryAVZQ","ocUghVyGdCxSVjd463P6"); //productKey,deviceName
   Serial.begin(9600);
   Serial.println();
-  //½â°ü
-  String JsonData = "{\"code\":200,\"data\":{},\"id\":\"1\",\"message\":\"success\",\"method\":\"thing.event.property.post\",\"version\":\"1.0\"}"; //Ä£Äâ°ü
+  //è§£åŒ…
+  String JsonData = "{\"code\":200,\"data\":{},\"id\":\"1\",\"message\":\"success\",\"method\":\"thing.event.property.post\",\"version\":\"1.0\"}"; //æ¨¡æ‹ŸåŒ…
   uint16_t ID,CODE;
   link.post_reply(JsonData,ID,CODE);
   Serial.println(ID);

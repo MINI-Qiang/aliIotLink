@@ -120,16 +120,19 @@ String AliIot::readClientId()
  
  bool AliIot::connect()
  {
-	 return _client->connect(_ClientId.c_str(),_Username.c_str(),_PasswdHash.c_str());   //像服务器传递 ClientId，用户名，密码
+	 bool ass = _client->connect(_ClientId.c_str(),_Username.c_str(),_PasswdHash.c_str());   //像服务器传递 ClientId，用户名，密码
+	 Serial.println(_ClientId);
+	 Serial.println(_Username);
+	 Serial.println(_PasswdHash);
+	 return ass;
  }
  
  //重连
  void AliIot::reconnect()
  {
-
+  byte Num=0;   //失败计数器
    while(!_client->connected()) //检查网络网络是否不正常，断开的网络会锁定重试
    {
-
 	  if (connect())   //重连并判断是否成功
 	  {
 		  //成功
@@ -137,13 +140,18 @@ String AliIot::readClientId()
 		  {
 			  subscribe(TopicName[a].c_str());
 		  }
-		  
 		  //填写上线订阅，应该是个String数组传入循环订阅处理
 	  } 
 	else 
 		{
 			//链接失败
+			Num++;
+			 if(Num >3)  //大于3次则跳出死循环
+		   {
+			   break;
+		   }
 		   delay(5000);   //暂停5秒钟重试
+		  
 		}
   }
  }

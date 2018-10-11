@@ -7,7 +7,7 @@
 #include <modules/mqtt/PubSubClient.h>
 #include <modules/Sha/sha1.h>
 
-#define MQTT_Topic_Quantity  2  // 订阅TOPIC 数量
+#define MQTT_Topic_Quantity  4  // 订阅TOPIC 数量
 
 
 class AliIot
@@ -34,7 +34,12 @@ class AliIot
 	    int state();   //错误消息返回
 		//AliIOTlink部分
 		void init(String __DeviceName,String __ProductKey,String __DeviceSecret);
-
+		void autoAnswer(char* __topic, byte* __payload, unsigned int __length);   //上行反馈自动应答
+		//
+		String _URL;
+		String _ClientId;
+		String _Username;
+		String _PasswdHash;
 	protected:
 		//私有函数
 		void subscribe(const char* topic);  //监听Topic
@@ -54,11 +59,7 @@ class AliIot
 		uint16_t _port = 1883;
 		uint16_t Times;
 		uint8_t TopicNum =0;   //topic计数器
-		//
-		String _URL;
-		String _ClientId;
-		String _Username;
-		String _PasswdHash;
+		
 		//三元素
 		String _DeviceName;	
 		String _ProductKey;
