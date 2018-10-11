@@ -120,11 +120,7 @@ String AliIot::readClientId()
  
  bool AliIot::connect()
  {
-	 bool ass = _client->connect(_ClientId.c_str(),_Username.c_str(),_PasswdHash.c_str());   //像服务器传递 ClientId，用户名，密码
-	 Serial.println(_ClientId);
-	 Serial.println(_Username);
-	 Serial.println(_PasswdHash);
-	 return ass;
+	return _client->connect(_ClientId.c_str(),_Username.c_str(),_PasswdHash.c_str());   //像服务器传递 ClientId，用户名，密码
  }
  
  //重连
