@@ -3,9 +3,9 @@
 
 #include <Arduino.h>
 
-#include "Alink.h"
 #include <modules/mqtt/PubSubClient.h>
 #include <modules/Sha/sha1.h>
+#include <modules/ArduinoJson.h>
 
 #define MQTT_Topic_Quantity  4  // 订阅TOPIC 数量
 
@@ -32,11 +32,33 @@ class AliIot
 		void reconnect();
 		void loop();  //心跳维持与重连
 	    int state();   //错误消息返回
+		
+		//alink协议
+		void alink_begin();  //传入2元素
+		//void version(String _version);
+		void serialization_post(uint16_t _id,JsonObject &_AlinkJson);    //编码Alink 上行消息
+		void deserialization_post(String _JsonStr,uint16_t &_id,uint16_t &_code);   //上报应答解码
+		void deserialization_post(byte *_JsonStr,uint16_t _length,uint16_t &_id,uint16_t &_code);   //上报应答解码
+		//编码Alink 应答消息	
+		void serialization_set(uint16_t _id,uint16_t _code);  //应答ID与编码
+		void deserialization_set(String _JsonStr,uint16_t &_id, String &_AlinkJson); //服务器下推消息解码
+		void deserialization_set(byte *_JsonStr,uint16_t _length,uint16_t &_id, String &_AlinkJson);
 		//AliIOTlink部分
 		void init(String __DeviceName,String __ProductKey,String __DeviceSecret);
 		void autoAnswer(char* __topic, byte* __payload, unsigned int __length);   //上行反馈自动应答
-
-	protected:
+		
+		
+		
+		//公共变量
+		String json_str_post_;
+		String json_str_set_reply_;
+		String topic_post_;
+		String topic_post_reply_;
+		String topic_set_;
+		String topic_set_reply_;
+		
+		
+	private:
 		//私有函数
 		void subscribe(const char* topic);  //监听Topic
 		String readClientId();  //获取登录的设备ID
@@ -64,6 +86,8 @@ class AliIot
 		String _DeviceName;	
 		String _ProductKey;
 		String _DeviceSecret;
-	private:
+		
+
+
 };
 #endif

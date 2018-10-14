@@ -132,6 +132,7 @@ String AliIot::readClientId()
 	  if (connect())   //重连并判断是否成功
 	  {
 		  //成功
+		  
 		  for(byte a = 0;a<TopicNum;a++)
 		  {
 			  subscribe(TopicName[a].c_str());
@@ -146,8 +147,7 @@ String AliIot::readClientId()
 		   {
 			   break;
 		   }
-		   delay(5000);   //暂停5秒钟重试
-		  
+		   delay(2000);   //暂停5秒钟重试
 		}
   }
  }

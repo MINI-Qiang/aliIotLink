@@ -1,0 +1,49 @@
+#include "aliIot.h"
+#include <ESP8266WiFi.h>
+
+const char* ssid = "MiNiQiang";
+const char* password = "534659123";
+//三元素
+const char* ProductKey = "a1hPzrIkrvR";
+const char* DeviceName = "iJKtZe6MYlsEEV0ykB5J";
+const char* DeviceSecret = "1moXhCHFrZMU2RXUxL39nmeWWPjg8NTv";
+
+WiFiClient espClient;   //实例化 wifi网络
+PubSubClient client(espClient); //将wifi网络传入MQTT
+AliIot Link(client);  //将mqtt对象传入AliIOT
+
+void Callbacks(char* topic, byte* payload, unsigned int length);  //消息回调函数
+
+void setup()
+{
+  Serial.begin(115200);
+  WiFi.mode(WIFI_STA);   //配置为客户端模式
+  WiFi.begin(ssid, password);  //初始化并且链接wifi
+  Link.init(DeviceName, ProductKey, DeviceSecret); //初始化环境三元素,并且自动订阅set 与post_reply topic
+  Link.setCallback(Callbacks);   //注册回调函数
+}
+void loop()
+{
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Link.loop();  //服务器心跳维持与断线重连
+  delay(1000);
+  //业务逻辑，数据上报等用户代码
+}
+
+void Callbacks(char* topic, byte* payload, unsigned int length)
+{
+  //自动消息应答
+  //设备上报消息响应
+  if (strcmp(topic, Link.topic_post_reply_.c_str()) == 0)
+  {
+    Serial.println("POST");
+  }
+  //下行操作用户代码
+  if (strcmp(topic, Link.topic_set_.c_str()) == 0)
+  {
+    Serial.println("SET");
+  }
+}
