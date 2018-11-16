@@ -22,14 +22,11 @@ void setup()
   delay(5000);
   Serial.begin(115200);
   Ethernet.begin(mac);
-  aliLink.writeID("ArduinoIOT");   //设备名称
-  aliLink.writeDeviceName("ArduinoIOT");  //元素1  DeviceName
-  aliLink.writeProductKey("a1SRXXXXX5L");  //元素2  ProductKey
-  aliLink.writeDeviceSecret("TQw1KMA7NXXXXXrw7CWVaQybt2gvqQEd"); //元素3  DeviceSecret
+
   aliLink.subTopic("/a1SRXXXXX5L/ArduinoIOT/get");   //订阅
   aliLink.subTopic("/a1SRXXXXX5L/ArduinoIOT/update/error");   //订阅
   aliLink.setCallback(Callbacks);
-  aliLink.begin();  //完成初始化配置
+  aliLink.begin("sensor1","a1agPKQ3fSf","J0lvZSntI0ZYfpqkQ4h41OU7WOxoAYgH");  //完成初始化配置 三元素(DeviceName,ProductKey,DeviceSecret)
 }
 void loop() 
 {
@@ -38,7 +35,7 @@ void loop()
   {
     Serial.println(aliLink.state());
    }
-  aliLink.loop();
+  aliLink.loop();   //mqtt循环监听服务
   //delay(1000);
 }
 

@@ -14,7 +14,7 @@ class AliIotLink
 	public:
 		AliIotLink(PubSubClient& client);
 		void begin();
-		void begin(String __ServerUrl,uint16_t __port ,String __Id,String __DeviceName,String __ProductKey,String __DeviceSecret);
+		void begin(String __DeviceName,String __ProductKey,String __DeviceSecret);
 		void writeUrl(String __ServerUrl);    // 设置登录网址
 		void writePort(uint16_t __port);   //服务器端口
 		void writeID(String __Id);    //设备ID

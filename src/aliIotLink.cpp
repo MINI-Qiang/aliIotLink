@@ -18,11 +18,9 @@ void AliIotLink::begin()
 }
 
 
-void AliIotLink::begin(String __ServerUrl,uint16_t __port,String __Id,String __DeviceName,String __ProductKey,String __DeviceSecret)
+void AliIotLink::begin(String __DeviceName,String __ProductKey,String __DeviceSecret)
 {
-	_ServerUrl = __ServerUrl;
-	_port = __port;
-	_Id = __Id;
+	_Id = __DeviceName;
 	_DeviceName = __DeviceName;
 	_ProductKey = __ProductKey;
 	_DeviceSecret = __DeviceSecret;
