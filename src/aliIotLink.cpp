@@ -1,4 +1,5 @@
 #include "aliIotLink.h"
+SHA256 sha256;
 
 AliIotLink::AliIotLink(PubSubClient& client)
 {
@@ -99,16 +100,17 @@ String AliIotLink::readClientId()
 	 String _Passwd =  "clientId" + _Id + "deviceName" + _DeviceName +"productKey"+_ProductKey + "timestamp" + Times;
 	 _PasswdHash = "";
 	 
-	 Sha1.initHmac((const uint8_t*)_DeviceSecret.c_str(),32);  //传入密钥
-	 Sha1.print(_Passwd);   //传入内容
-	 uint8_t *ByteHash = Sha1.resultHmac() ;
-	 
-	 for(int i =0;i<20;i++)
+	 byte hashData[64];
+	 Serial.println(_Passwd.length());
+	 HMAC(_DeviceSecret.c_str(), 32, _Passwd.c_str(), _Passwd.length(), hashData);
+
+	 for (int i = 0; i < 32; i++)  //hash 固定长度
 	 {
-		_PasswdHash = _PasswdHash + "0123456789ABCDEF"[ByteHash[i]>>4];
-		_PasswdHash = _PasswdHash + "0123456789ABCDEF"[ByteHash[i]&0xf];
-	 } 
-	 return _PasswdHash;  //返回HASH密文
+		_PasswdHash = _PasswdHash + "0123456789ABCDEF"[hashData[i] >> 4];
+	 	_PasswdHash = _PasswdHash + "0123456789ABCDEF"[hashData[i] & 0xf];
+	 }
+
+	 //return _PasswdHash;  //返回HASH密文
  }
  
  
@@ -117,7 +119,12 @@ String AliIotLink::readClientId()
  
  bool AliIotLink::connect()
  {
+	 Serial.println(_ClientId);
+	 Serial.println(_Username);
+	 Serial.println(_PasswdHash);
 	 return _client->connect(_ClientId.c_str(),_Username.c_str(),_PasswdHash.c_str());   //像服务器传递 ClientId，用户名，密码
+
+	 
  }
  
  //重连
@@ -129,6 +136,7 @@ String AliIotLink::readClientId()
 
 	  if (connect())   //重连并判断是否成功
 	  {
+		  Serial.println("成功");
 		  //成功
 		  for(byte a = 0;a<TopicNum;a++)
 		  {
@@ -140,6 +148,7 @@ String AliIotLink::readClientId()
 	else 
 		{
 			//链接失败
+		   Serial.println("失败");
 		   delay(5000);   //暂停5秒钟重试
 		}
   }
@@ -191,4 +200,16 @@ void AliIotLink::subTopic(String topic)
 	{
 		TopicNum = MQTT_Topic_Quantity;
 	}
+}
+
+void AliIotLink::HMAC( char const *key, byte KeySize,  char const *data, byte dataSize, byte *hashData)
+{
+  uint8_t result[32];
+  sha256.resetHMAC(key, KeySize);  //传入KEY,和key长度
+  sha256.update(data, dataSize);// 传输 hash明文
+  sha256.finalizeHMAC(key, KeySize, result, sizeof(result)); // 计算
+  for (byte a = 0; a < sizeof(result); a++) //传出签名
+  {
+    *(hashData + a) = result[a];
+  }
 }

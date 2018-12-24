@@ -4,7 +4,8 @@
 #include <Arduino.h>
 
 #include <modules/mqtt/PubSubClient.h>
-#include <modules/Sha/sha1.h>
+#include <modules/Crypto/SHA256.h>
+#include <modules/Crypto/Crypto.h>
 
 #define MQTT_Topic_Quantity  2
 
@@ -36,6 +37,9 @@ class AliIotLink
 		
 	private:
 		//私有函数
+		
+		void HMAC(char const *key, byte KeySize, char const *data, byte dataSize, byte *hashData);
+
 		void subscribe(const char* topic);  //监听Topic
 		String readClientId();  //获取登录的设备ID
 		String readUrl();  
@@ -49,7 +53,7 @@ class AliIotLink
 		String TopicName[MQTT_Topic_Quantity];
 		String _ServerUrl = "iot-as-mqtt.cn-shanghai.aliyuncs.com";
 		String _Id;
-		String _ClientIdSuffix = "|securemode=3,signmethod=hmacsha1,timestamp=";
+		String _ClientIdSuffix = "|securemode=3,signmethod=hmacsha256,timestamp=";
 		
 		uint16_t _port = 1883;
 		uint16_t Times;
