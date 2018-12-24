@@ -101,7 +101,7 @@ String AliIotLink::readClientId()
 	 _PasswdHash = "";
 	 
 	 byte hashData[64];
-	 Serial.println(_Passwd.length());
+	 
 	 HMAC(_DeviceSecret.c_str(), 32, _Passwd.c_str(), _Passwd.length(), hashData);
 
 	 for (int i = 0; i < 32; i++)  //hash 固定长度
@@ -119,9 +119,8 @@ String AliIotLink::readClientId()
  
  bool AliIotLink::connect()
  {
-	 Serial.println(_ClientId);
-	 Serial.println(_Username);
-	 Serial.println(_PasswdHash);
+
+
 	 return _client->connect(_ClientId.c_str(),_Username.c_str(),_PasswdHash.c_str());   //像服务器传递 ClientId，用户名，密码
 
 	 
@@ -136,7 +135,7 @@ String AliIotLink::readClientId()
 
 	  if (connect())   //重连并判断是否成功
 	  {
-		  Serial.println("成功");
+
 		  //成功
 		  for(byte a = 0;a<TopicNum;a++)
 		  {
@@ -148,7 +147,7 @@ String AliIotLink::readClientId()
 	else 
 		{
 			//链接失败
-		   Serial.println("失败");
+
 		   delay(5000);   //暂停5秒钟重试
 		}
   }
