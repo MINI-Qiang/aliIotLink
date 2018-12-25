@@ -34,22 +34,22 @@ void setup()
   WiFi.mode(WIFI_STA);   //配置为客户端模式
   WiFi.begin(ssid, password);  //初始化并且链接wifi
   
-  while (WiFi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED)  //等待wifi连接
+  {  
     delay(500);
     Serial.print(".");
   }
 
-  aliLink.subTopic("/a1agPKQ3fSf/sensor1/get");   //订阅
-  //aliLink.subTopic("/a1agPKQ3fSf/sensor1/update/error");   //订阅
+  aliLink.subTopic(FPSTR(setTopic));   //订阅服务器下行消息
+
   aliLink.setCallback(Callbacks);
   aliLink.begin(FPSTR(DeviceName),FPSTR(ProductKey),FPSTR(DeviceSecret));  //完成初始化配置 三元素(DeviceName,ProductKey,DeviceSecret)
 }
 void loop()
 {
-
-  if (aliLink.state() != 0)
+  if (aliLink.state() != 0) // 显示连接错误码，实际项目不需要
   {
     Serial.println(aliLink.state());
   }
-  aliLink.loop();
+  aliLink.loop();  //循环维持心跳与消息触发，应尽可能多的执行
 }
