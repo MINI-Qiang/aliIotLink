@@ -8,7 +8,7 @@ AliIotLink::AliIotLink(PubSubClient& client)
 void AliIotLink::begin()
 {
   //randomSeed(analogRead(A0));   //获取IO随机值【非安全的伪随机】作为种子
-  delayMicroseconds(random(0,10000));   //延迟随机时间
+  //delayMicroseconds(random(0,10000));   //延迟随机时间
   
   generateClientId();
   readUrl();
@@ -26,7 +26,7 @@ void AliIotLink::begin(String __DeviceName,String __ProductKey,String __DeviceSe
 	_ProductKey = __ProductKey;
 	_DeviceSecret = __DeviceSecret;
 	//randomSeed(analogRead(A0));
-    delayMicroseconds(random(0,10000));
+    //delayMicroseconds(random(0,10000));
 	generateClientId();
 	readUrl();
 	readUser();
@@ -36,7 +36,7 @@ void AliIotLink::begin(String __DeviceName,String __ProductKey,String __DeviceSe
 
 void AliIotLink::writeUrl(String __ServerUrl)    // 设置登录网址
 {
-	_ServerUrl = __ServerUrl;
+	//_ServerUrl = __ServerUrl;
 }
 //服务器端口设置
 void AliIotLink::writePort(uint16_t __port)
@@ -69,7 +69,7 @@ void AliIotLink::generateClientId()
 	//ID+参数+随机数+结尾符号
 	randomSeed(micros());
 	Times  =random(0, 65535);
-	_ClientId = _Id + _ClientIdSuffix + Times +"|";
+	_ClientId = _Id + FPSTR(_ClientIdSuffix) + Times +"|";
 }
 
 //获取合成好的登录用的ClientId
@@ -82,7 +82,7 @@ String AliIotLink::readClientId()
 //合成访问网址
  String AliIotLink::readUrl()
  {
-	 _URL = _ProductKey + "." + _ServerUrl;
+	 _URL = _ProductKey + F(".") + FPSTR(_ServerUrl);
 	 return _URL;
  }
  

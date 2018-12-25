@@ -9,6 +9,8 @@
 
 #define MQTT_Topic_Quantity  2
 
+static const char _ServerUrl[] PROGMEM = "iot-as-mqtt.cn-shanghai.aliyuncs.com";
+static const char _ClientIdSuffix[] PROGMEM = "|securemode=3,signmethod=hmacsha256,timestamp=";
 
 class AliIotLink
 {
@@ -51,9 +53,9 @@ class AliIotLink
 		PubSubClient* _client;    //mqtt接口
 		//私有变量
 		String TopicName[MQTT_Topic_Quantity];
-		String _ServerUrl = "iot-as-mqtt.cn-shanghai.aliyuncs.com";
+		//String _ServerUrl = "iot-as-mqtt.cn-shanghai.aliyuncs.com";
 		String _Id;
-		String _ClientIdSuffix = "|securemode=3,signmethod=hmacsha256,timestamp=";
+		//String _ClientIdSuffix = "|securemode=3,signmethod=hmacsha256,timestamp=";
 		
 		uint16_t _port = 1883;
 		uint16_t Times;
