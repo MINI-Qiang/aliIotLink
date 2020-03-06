@@ -69,7 +69,8 @@ void AliIotLink::generateClientId()
 	//ID+参数+随机数+结尾符号
 	randomSeed(micros());
 	Times  =random(0, 65535);
-	_ClientId = _Id + FPSTR(_ClientIdSuffix) + Times +"|";
+	_ClientId = _Id + "|securemode=3,signmethod=hmacsha256,timestamp=" + Times +"|";
+
 }
 
 //获取合成好的登录用的ClientId
@@ -82,7 +83,8 @@ String AliIotLink::readClientId()
 //合成访问网址
  String AliIotLink::readUrl()
  {
-	 _URL = _ProductKey + F(".") + FPSTR(_ServerUrl);
+
+	 _URL = _ProductKey + "." + "iot-as-mqtt.cn-shanghai.aliyuncs.com";
 	 return _URL;
  }
  
@@ -147,8 +149,8 @@ String AliIotLink::readClientId()
 	else 
 		{
 			//链接失败
-
 		   delay(5000);   //暂停5秒钟重试
+		   return;  //结束函数，避免锁死
 		}
   }
  }

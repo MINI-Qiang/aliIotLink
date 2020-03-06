@@ -8,9 +8,8 @@
 #include <modules/Crypto/Crypto.h>
 
 #define MQTT_Topic_Quantity  2
+#define in3_5 10 
 
-static const char _ServerUrl[] PROGMEM = "iot-as-mqtt.cn-shanghai.aliyuncs.com";
-static const char _ClientIdSuffix[] PROGMEM = "|securemode=3,signmethod=hmacsha256,timestamp=";
 
 class AliIotLink
 {
